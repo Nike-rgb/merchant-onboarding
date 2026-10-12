@@ -24,6 +24,27 @@ with role-based **and** object-level authorization throughout, plus an audit tra
 
 ---
 
+## Diagrams
+
+**Current system (as built)** — a single `api` container runs the HTTP API and the
+BullMQ worker in one process, alongside Postgres and Redis.
+
+![Architecture](docs/architecture.png)
+
+**Data model** — `users`, `merchant_applications`, `audit_logs` (one-to-many links to
+`users`; audit rows reference both the actor and the application).
+
+![Data model](docs/data-model-erd.png)
+
+**Submit → asynchronous risk review** — submit returns immediately; the worker assesses
+with retries/backoff and persists the verdict idempotently.
+
+![Risk review sequence](docs/sequence-risk-review.png)
+
+> Diagrams authored in Eraser; source lives in the team workspace, PNGs exported to `docs/`.
+
+---
+
 ## Quick start (Docker — recommended)
 
 ```bash
